@@ -17,8 +17,13 @@ res_atoms = [(res.get_resname() + str(res.id[1]),
 def g(m, k):
     return float(m.GetProp(k)) if m.HasProp(k) else None
 
+# RDKit mis-reads GNINA's .sdf.gz in this image - decompress first.
+import gzip
+with gzip.open('refined.sdf.gz', 'rt', errors='replace') as fh:
+    open('refined.sdf', 'w').write(fh.read())
+
 best_per = {}
-for m in Chem.SDMolSupplier('refined.sdf.gz', removeHs=True, sanitize=False):
+for m in Chem.SDMolSupplier('refined.sdf', removeHs=True, sanitize=False):
     if m is None:
         continue
     cid = m.GetProp('_Name')
